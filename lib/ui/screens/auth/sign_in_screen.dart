@@ -124,6 +124,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     /// SIGN IN BUTTON
                     GestureDetector(
                       onTap: () {
+                        print("+998${_phoneController.text.replaceAll(' ', '')}");
                         if (_formKey.currentState!.validate()) {
                           context.read<AuthBloc>().add(
                                 SignInEvent(

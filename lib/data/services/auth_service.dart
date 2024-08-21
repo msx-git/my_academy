@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:my_academy/logic/cubits/user_cubit.dart';
 
 import '../../core/network/dio_client.dart';
 import '../../core/utils/shared_prefs.dart';
@@ -16,6 +18,7 @@ class AuthService {
       );
       final data = _handleResponse(response);
       await SharedPrefs.saveAccessToken(data['data']['token']);
+      await getUser();
       return data;
     } catch (e) {
       rethrow;
@@ -34,6 +37,7 @@ class AuthService {
       );
       final data = _handleResponse(response);
       await SharedPrefs.saveAccessToken(data['data']['token'].toString());
+      await getUser();
       return data;
     } catch (e) {
       rethrow;
@@ -41,7 +45,7 @@ class AuthService {
   }
 
   /// SIGN OUT
-  Future<void> signOut(String accessToken) async {
+  Future<void> signOut() async {
     try {
       final response = await _dio.post(
         path: '/logout',
@@ -51,6 +55,25 @@ class AuthService {
         await SharedPrefs.clearAccessToken();
       } else {
         throw Exception('Failed to sign out: ${response.statusCode}');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// GET USER
+  Future<void> getUser() async {
+    try {
+      final response = await _dio.get(
+        path: '/user',
+      );
+      if(response.statusCode == 200){
+        final data = _handleResponse(response);
+        final userBloc = UserBloc();
+        userBloc.loadUser(data);
+        debugPrint("GET USER: ${data.toString()}");
+      } else{
+        throw Exception("Couldn't get User data: ${response.data}");
       }
     } catch (e) {
       rethrow;

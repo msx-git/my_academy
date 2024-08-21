@@ -11,7 +11,7 @@ class DioClient {
       ..options.connectTimeout = const Duration(milliseconds: 3)
       ..options.receiveTimeout = const Duration(seconds: 3)
       ..options.baseUrl = "http://millima.flutterwithakmaljon.uz/api"
-      ..interceptors.add(TestInterceptor());
+      ..interceptors.add(DioInterceptor());
   }
 
   static final _singletonConstructor = DioClient._singleton();
@@ -25,15 +25,9 @@ class DioClient {
     Map<String, dynamic>? queryParams,
   }) async {
     try {
-      final accessToken = await SharedPrefs.getAccessToken();
       return _dio.get(
         path,
         queryParameters: queryParams,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $accessToken',
-          },
-        ),
       );
     } catch (e) {
       rethrow;
@@ -45,15 +39,9 @@ class DioClient {
     Map<String, dynamic>? data,
   }) async {
     try {
-      final accessToken = await SharedPrefs.getAccessToken();
       return _dio.post(
         path,
         data: data,
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $accessToken',
-          },
-        ),
       );
     } catch (e) {
       rethrow;
@@ -61,16 +49,23 @@ class DioClient {
   }
 }
 
-class TestInterceptor extends Interceptor {
+class DioInterceptor extends Interceptor {
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+  void onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    final accessToken = await SharedPrefs.getAccessToken();
+    if (accessToken != null) {
+      options.headers = {
+        'Authorization': 'Bearer $accessToken',
+      };
+    }
     debugPrint(options.method.toString());
-
     if (options.connectTimeout!.inMilliseconds <
         const Duration(seconds: 3).inMilliseconds) {
       options.connectTimeout = const Duration(seconds: 3);
     }
-
     super.onRequest(options, handler);
   }
 

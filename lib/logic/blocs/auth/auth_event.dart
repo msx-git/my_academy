@@ -28,10 +28,9 @@ final class SignInEvent extends AuthEvent {
 
 final class SignOutEvent extends AuthEvent {
   @override
-  List<Object> get props => [accessToken];
+  List<Object> get props => [context];
 
-  final String accessToken;
   final BuildContext context;
 
-  const SignOutEvent({required this.accessToken, required this.context});
+  const SignOutEvent({required this.context});
 }

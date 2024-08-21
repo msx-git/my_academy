@@ -1,29 +1,46 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:my_academy/core/core.dart';
-import 'package:my_academy/ui/screens/auth/sign_up_screen_admin_teacher.dart';
 
 import '../../../data/models/register_request.dart';
-import '../../../logic/blocs/auth/auth_bloc.dart';
+import '../../../logic/blocs/blocs.dart';
 import '../../widgets/widgets.dart';
+import 'sign_up_screen.dart';
 
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+class SignUpScreenAdminTeacher extends StatefulWidget {
+  const SignUpScreenAdminTeacher({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  State<SignUpScreenAdminTeacher> createState() =>
+      _SignUpScreenAdminTeacherState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _SignUpScreenAdminTeacherState extends State<SignUpScreenAdminTeacher> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _passwordConfirmController = TextEditingController();
+
+  String _selectedRole = 'Teacher'; // Default role
+
+  void _onRoleSelected(String role) {
+    setState(() {
+      _selectedRole = role;
+    });
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _phoneController.dispose();
+    _passwordController.dispose();
+    _passwordConfirmController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +85,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       style: AppTextStyles.labelNavy,
                     ),
                   ),
-                  26.height,
+                  Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      _selectedRole,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
 
                   /// NAME INPUT
                   const LabelTitle(label: "Name"),
@@ -137,7 +164,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       return null;
                     },
                   ),
-                  25.height,
+                  10.height,
+                  RoleSelectionWidget(onRoleSelected: _onRoleSelected),
+                  10.height,
 
                   /// SIGN UP BUTTON
                   GestureDetector(
@@ -149,13 +178,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               SignUpEvent(
                                 request: RegisterRequest(
                                   name: _nameController.text.trim(),
-                                  phone:
-                                      "+998${_phoneController.text.trim().replaceAll(' ', '')}",
-                                  password: _passwordController.text
-                                      .trim()
-                                      .replaceAll(' ', ''),
+                                  phone: _phoneController.text.trim(),
+                                  password: _passwordController.text.trim(),
                                   passwordConfirmation:
                                       _passwordConfirmController.text.trim(),
+                                  roleId: _selectedRole == "Teacher" ? 2 : 3,
                                 ),
                                 context: context,
                               ),
@@ -189,25 +216,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                   ),
-                  20.height,
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        CupertinoPageRoute(
-                          builder: (context) =>
-                              const SignUpScreenAdminTeacher(),
-                        ),
-                      );
-                    },
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        "You are not a student?",
-                        style: AppTextStyles.blueText,
-                      ),
-                    ),
-                  )
                 ],
               ),
             ),
@@ -218,19 +226,51 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 }
 
-class LabelTitle extends StatelessWidget {
-  const LabelTitle({super.key, required this.label});
+class RoleSelectionWidget extends StatefulWidget {
+  final Function(String) onRoleSelected;
 
-  final String label;
+  const RoleSelectionWidget({super.key, required this.onRoleSelected});
+
+  @override
+  State<RoleSelectionWidget> createState() => _RoleSelectionWidgetState();
+}
+
+class _RoleSelectionWidgetState extends State<RoleSelectionWidget> {
+  String _selectedRole = 'Teacher'; // Default selection
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: 6.w, bottom: 7.h),
-      child: Text(
-        label,
-        style: AppTextStyles.hintLabel,
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Text(
+        //   'Select your role:',
+        //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        // ),
+        // SizedBox(height: 10),
+        RadioListTile<String>(
+          title: const Text('Teacher'),
+          value: 'Teacher',
+          groupValue: _selectedRole,
+          onChanged: (value) {
+            setState(() {
+              _selectedRole = value!;
+            });
+            widget.onRoleSelected(_selectedRole); // Notify the parent widget
+          },
+        ),
+        RadioListTile<String>(
+          title: const Text('Admin'),
+          value: 'Admin',
+          groupValue: _selectedRole,
+          onChanged: (value) {
+            setState(() {
+              _selectedRole = value!;
+            });
+            widget.onRoleSelected(_selectedRole); // Notify the parent widget
+          },
+        ),
+      ],
     );
   }
 }

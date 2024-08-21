@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_academy/data/repositories/auth_repository.dart';
 import 'package:my_academy/data/services/auth_service.dart';
 import 'package:my_academy/logic/blocs/auth/auth_bloc.dart';
+import 'package:my_academy/logic/cubits/user_cubit.dart';
 
 import 'core/core.dart';
 
@@ -24,6 +25,7 @@ void main() async {
               authRepository: context.read<AuthRepository>(),
             ),
           ),
+          BlocProvider(create: (context) => UserBloc())
         ],
         child: const MyApp(),
       ),

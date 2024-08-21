@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../data/models/register_request.dart';
@@ -32,7 +33,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // Navigate to HomeScreen after successful sign-up
       Navigator.pushReplacement(
         event.context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        CupertinoPageRoute(builder: (context) => const HomeScreen()),
       );
     } on DioException catch (e) {
       emit(ErrorAuthState(errorMessage: e.toString()));
@@ -51,7 +52,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // Navigate to HomeScreen after successful sign-in
       Navigator.pushReplacement(
         event.context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        CupertinoPageRoute(builder: (context) => const HomeScreen()),
       );
     } on DioException catch (e) {
       emit(ErrorAuthState(errorMessage: e.toString()));
@@ -63,7 +64,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _onSignOut(SignOutEvent event, emit) async {
     emit(LoadingAuthState());
     try {
-      _authRepository.signOut(event.accessToken);
+      _authRepository.signOut();
       emit(UnAuthenticatedAuthState());
       // Navigate to SignInScreen after successful sign-out
       Navigator.pushReplacement(

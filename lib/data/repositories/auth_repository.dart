@@ -19,7 +19,7 @@ class AuthRepository {
   }
 
   /// SIGN OUT
-  Future<void> signOut(String accessToken) async {
-    await _authService.signOut(accessToken);
+  Future<void> signOut() async {
+    await _authService.signOut();
   }
 }

@@ -5,16 +5,18 @@ class RegisterRequest extends Equatable {
   final String phone;
   final String password;
   final String passwordConfirmation;
+  final int roleId;
 
   const RegisterRequest({
     required this.name,
     required this.phone,
     required this.password,
     required this.passwordConfirmation,
+    this.roleId = 1,
   });
 
   @override
-  List<Object> get props => [name, phone, password, passwordConfirmation];
+  List<Object> get props => [name, phone, password, passwordConfirmation, roleId];
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
@@ -23,6 +25,7 @@ class RegisterRequest extends Equatable {
     result.addAll({'phone': phone});
     result.addAll({'password': password});
     result.addAll({'password_confirmation': passwordConfirmation});
+    result.addAll({'role_id': roleId});
 
     return result;
   }
@@ -32,7 +35,8 @@ class RegisterRequest extends Equatable {
       name: map['name'] ?? '',
       phone: map['phone'] ?? '',
       password: map['password'] ?? '',
-      passwordConfirmation: map['passwordConfirmation'] ?? '',
+      passwordConfirmation: map['password_confirmation'] ?? '',
+      roleId: map['role_id'] ?? '',
     );
   }
 }
