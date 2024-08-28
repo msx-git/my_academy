@@ -1,2 +1,11 @@
-export 'register_request.dart';
-export 'user.dart';
+export 'auth/authentication_response.dart';
+export 'auth/login_request.dart';
+export 'auth/register_request.dart';
+export 'auth/social_login_request.dart';
+export 'groups/add_group_request.dart';
+export 'groups/group.dart';
+export 'room/room.dart';
+export 'subject/subject.dart';
+export 'timetable/timetable.dart';
+export 'timetable/timetable_request.dart';
+export 'user/user.dart';

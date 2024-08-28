@@ -1,34 +1,22 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_academy/data/repositories/auth_repository.dart';
-import 'package:my_academy/data/services/auth_service.dart';
-import 'package:my_academy/logic/blocs/auth/auth_bloc.dart';
-import 'package:my_academy/logic/cubits/user_cubit.dart';
+import 'package:my_academy/data/services/admin/admin_groups_service.dart';
+import 'package:my_academy/data/services/admin/admin_subjects_service.dart';
+import 'package:my_academy/data/services/admin/admin_users_service.dart';
 
-import 'core/core.dart';
+import 'core/app.dart';
+import 'core/utils/locator.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final authService = AuthService();
-  runApp(
-    MultiRepositoryProvider(
-      providers: [
-        RepositoryProvider(
-          create: (context) => AuthRepository(authService: authService),
-        )
-      ],
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) => AuthBloc(
-              authRepository: context.read<AuthRepository>(),
-            ),
-          ),
-          BlocProvider(create: (context) => UserBloc())
-        ],
-        child: const MyApp(),
-      ),
-    ),
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  await dependencySetUp();
+  // final admin = AdminSubjectsService();
+  // admin.getAllSubjects();
+  runApp(const MainApp());
 }

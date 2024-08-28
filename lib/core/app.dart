@@ -1,26 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:my_academy/ui/screens/splash/splash_screen.dart';
 
-import 'core.dart';
+import '../features/authentication/bloc/authentication_bloc.dart';
+import '../features/authentication/views/sign_in_screen.dart';
+import '../features/home/views/home_screen.dart';
+import '../features/user/bloc/user_bloc.dart';
+import 'utils/constants/app_colors.dart';
+import 'utils/helpers/dialogs.dart';
+import 'utils/providers.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MainApp extends StatelessWidget {
+  const MainApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return  ScreenUtilInit(
-      designSize: const Size(350, 800),
-      builder: (context, _) {
-        return MaterialApp(
-          theme: ThemeData(
-            scaffoldBackgroundColor: AppColors.mainBackground
-          ),
-          debugShowCheckedModeBanner: false,
-          home: SplashScreen(),
-        );
-      }
+    return MultiBlocProvider(
+      providers: providers,
+      child: ScreenUtilInit(
+        designSize: const Size(350, 800),
+        builder: (context, _) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              scaffoldBackgroundColor: AppColors.mainBackground,
+              appBarTheme: const AppBarTheme(
+                backgroundColor: AppColors.mainBackground,
+              ),
+            ),
+            home: BlocConsumer<AuthenticationBloc, AuthenticationState>(
+              listener: (context, state) {
+                if (state.isLoading) {
+                  AppDialogs.showLoading(context);
+                } else {
+                  AppDialogs.hideLoading(context);
+
+                  if (state.error != null) {
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(
+                        SnackBar(content: Text(state.error.toString())),
+                      );
+                  }
+                }
+
+                if (state.status == AuthenticationStatus.authenticated) {
+                  context.read<UserBloc>().add(GetCurrentUserEvent());
+                }
+              },
+              builder: (context, state) {
+                if (state.status == AuthenticationStatus.authenticated) {
+                  return const HomeScreen();
+                }
+
+                return const SignInScreen();
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 }
