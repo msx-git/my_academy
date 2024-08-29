@@ -17,6 +17,11 @@ class Room {
     required this.updatedAt,
   });
 
+  @override
+  String toString() {
+    return 'Room{id: $id, name: $name, description: $description, capacity: $capacity, createdAt: $createdAt, updatedAt: $updatedAt}';
+  }
+
   factory Room.fromJson(Map<String, dynamic> json) => Room(
         id: json['id'],
         name: json['name'],

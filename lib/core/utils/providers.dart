@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_academy/features/admin/blocs/groups/groups_bloc.dart';
+import 'package:my_academy/features/admin/blocs/rooms/rooms_bloc.dart';
 import 'package:my_academy/features/admin/blocs/subjects/subjects_bloc.dart';
 import 'package:my_academy/features/admin/blocs/users/users_bloc.dart';
 
@@ -14,4 +15,5 @@ final providers = [
   BlocProvider<UsersBloc>.value(value: getIt.get<UsersBloc>()),
   BlocProvider<GroupsBloc>.value(value: getIt.get<GroupsBloc>()),
   BlocProvider<SubjectsBloc>.value(value: getIt.get<SubjectsBloc>()),
+  BlocProvider<RoomsBloc>.value(value: getIt.get<RoomsBloc>()),
 ];

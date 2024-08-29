@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:my_academy/data/services/admin/admin_groups_service.dart';
 import 'package:my_academy/data/services/admin/admin_subjects_service.dart';
 import 'package:my_academy/data/services/admin/admin_users_service.dart';
+import 'package:my_academy/data/services/admin/admins_rooms_service.dart';
 
 import 'core/app.dart';
 import 'core/utils/locator.dart';
@@ -16,7 +17,7 @@ void main() async {
   );
 
   await dependencySetUp();
-  // final admin = AdminSubjectsService();
-  // admin.getAllSubjects();
+  final admin = AdminRoomsService();
+  admin.getAllRooms();
   runApp(const MainApp());
 }
